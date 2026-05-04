@@ -8,6 +8,8 @@ namespace InventarioApi.Models
         public string Nombre { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public Rol TipoRol { get; set; } 
+        public Rol TipoRol { get; set; }
+        public bool IsActivo { get; set; } = true; // por defecto todo usuario nuevo es activo
+ 
     }
 }

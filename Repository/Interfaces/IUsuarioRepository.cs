@@ -1,6 +1,6 @@
 using InventarioApi.Models;
 
-namespace InventarioApi.Repositories.Interfaces
+namespace InventarioApi.Repository.Interfaces
 {
     public interface IUsuarioRepository
     {

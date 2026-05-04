@@ -3,7 +3,6 @@ namespace InventarioApi.Models.Enums
     public enum Rol
     {
         Admin = 1,
-        Vendedor = 2,
-        Almacenista = 3
+        Empleado = 2,
     }
 }
