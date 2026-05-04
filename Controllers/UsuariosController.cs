@@ -7,7 +7,7 @@ namespace InventarioApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // todos los endpoints requieren token
+    [Authorize]
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
@@ -17,15 +17,57 @@ namespace InventarioApi.Controllers
             _usuarioService = usuarioService;
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")] // solo Admin puede ver todos los usuarios
-        public ActionResult<List<Usuario>> Get()
+        // 1. Crear usuario
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Post([FromBody] Usuario usuario)
         {
-            return Ok(_usuarioService.GetAll());
+            try
+            {
+                _usuarioService.Add(usuario);
+                return CreatedAtAction(nameof(Get), new { id = usuario.Id }, usuario);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message); // 409 si el email ya existe
+            }
         }
 
+        // 2. Actualizar usuario
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Put(int id, [FromBody] Usuario usuario)
+        {
+            if (id != usuario.Id) return BadRequest("El ID no coincide.");
+
+            var existente = _usuarioService.GetById(id);
+            if (existente == null) return NotFound("Usuario no encontrado.");
+
+            try
+            {
+                _usuarioService.Update(usuario);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message); // 409 si el email ya existe
+            }
+        }
+
+        // 3. Eliminar usuario
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int id)
+        {
+            var existente = _usuarioService.GetById(id);
+            if (existente == null) return NotFound("Usuario no encontrado.");
+            _usuarioService.Delete(id);
+            return NoContent();
+        }
+
+        // 4. Consultar usuario por ID
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")] // solo Admin puede ver un usuario
+        [Authorize(Roles = "Admin")]
         public ActionResult<Usuario> Get(int id)
         {
             var usuario = _usuarioService.GetById(id);
@@ -33,33 +75,12 @@ namespace InventarioApi.Controllers
             return Ok(usuario);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")] // solo Admin puede crear usuarios
-        public ActionResult Post([FromBody] Usuario usuario)
+        // 5. Listar usuarios
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<List<Usuario>> Get()
         {
-            _usuarioService.Add(usuario);
-            return CreatedAtAction(nameof(Get), new { id = usuario.Id }, usuario);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")] // solo Admin puede editar usuarios
-        public ActionResult Put(int id, [FromBody] Usuario usuario)
-        {
-            if (id != usuario.Id) return BadRequest("El ID no coincide.");
-            var existente = _usuarioService.GetById(id);
-            if (existente == null) return NotFound("Usuario no encontrado.");
-            _usuarioService.Update(usuario);
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] // solo Admin puede eliminar usuarios
-        public ActionResult Delete(int id)
-        {
-            var existente = _usuarioService.GetById(id);
-            if (existente == null) return NotFound("Usuario no encontrado.");
-            _usuarioService.Delete(id);
-            return NoContent();
+            return Ok(_usuarioService.GetAll());
         }
     }
 }
