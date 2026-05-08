@@ -25,7 +25,7 @@ namespace InventarioApi.Controllers
             try
             {
                 _usuarioService.Add(usuario);
-                return CreatedAtAction(nameof(Get), new { id = usuario.Id }, usuario);
+                return StatusCode(201, "Usuario creado correctamente.");
             }
             catch (Exception ex)
             {

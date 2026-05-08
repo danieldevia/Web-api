@@ -19,7 +19,7 @@ namespace InventarioApi.Controllers
 
         // 1. Crear producto
         [HttpPost]
-        [Authorize(Roles = "Admin, Empleado")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Post([FromBody] ProductoCreateDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre) || string.IsNullOrWhiteSpace(dto.SKU))
@@ -41,7 +41,7 @@ namespace InventarioApi.Controllers
 
         // 2. Actualizar producto
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin, Empleado")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Put(int id, [FromBody] ProductoUpdateDto dto)
         {
             if (id != dto.Id) return BadRequest("El ID de la ruta no coincide con el del cuerpo.");

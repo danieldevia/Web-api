@@ -5,11 +5,15 @@ namespace InventarioApi.Repository.Implementations
 {
     public class CategoriaRepository : ICategoriaRepository
     {
-        private static List<Categoria> _categorias = new List<Categoria>()
-        {
-            new Categoria { Id = 1, Nombre = "Ropa" },
-            new Categoria { Id = 2, Nombre = "Accesorios" }
-        };
+       private static List<Categoria> _categorias = new List<Categoria>()
+    {
+    new Categoria { Id = 1, Nombre = "Café Preparado" },
+    new Categoria { Id = 2, Nombre = "Dulces de Café" },
+    new Categoria { Id = 3, Nombre = "Arequipes" },
+    new Categoria { Id = 4, Nombre = "Galletas" },
+    new Categoria { Id = 5, Nombre = "Café en Grano" },
+    new Categoria { Id = 6, Nombre = "Café Molido" }
+    };
 
         // Solo trae todas las categorías, sin lógica
         public List<Categoria> GetAll() => _categorias;

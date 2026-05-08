@@ -84,9 +84,9 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddSingleton<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSingleton<ICategoriaRepository, CategoriaRepository>(); 
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();  
 
-// ──────────────────────────────────────────────
-// 5. Pipeline
 // ──────────────────────────────────────────────
 var app = builder.Build();
 
