@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme       = "Bearer",
         BearerFormat = "JWT",
         In           = ParameterLocation.Header,
-        Description  = "Ingresa tu token JWT aquí. Ejemplo: Bearer {token}"
+        Description  = "Ingresa tu token JWT aquí. Ejemplo: {token}"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // ← siempre antes de UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 app.MapControllers();
 
