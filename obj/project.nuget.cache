@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "d87BxyL6C7s=",
+  "dgSpecHash": "h110xPJmnTg=",
   "success": true,
   "projectFilePath": "C:\\Users\\danie\\Downloads\\InventarioApi\\InventarioApi\\InventarioApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\danie\\.nuget\\packages\\mapster\\10.0.7\\mapster.10.0.7.nupkg.sha512",
+    "C:\\Users\\danie\\.nuget\\packages\\mapster.core\\10.0.7\\mapster.core.10.0.7.nupkg.sha512",
+    "C:\\Users\\danie\\.nuget\\packages\\mapster.dependencyinjection\\10.0.7\\mapster.dependencyinjection.10.0.7.nupkg.sha512",
     "C:\\Users\\danie\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.0\\microsoft.aspnetcore.authentication.jwtbearer.10.0.0.nupkg.sha512",
     "C:\\Users\\danie\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\danie\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.0.2\\microsoft.identitymodel.abstractions.8.0.2.nupkg.sha512",

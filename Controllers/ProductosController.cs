@@ -136,5 +136,21 @@ namespace InventarioApi.Controllers
             if (umbral < 0) return BadRequest("El umbral no puede ser negativo.");
             return Ok(_productoService.GetBajoStock(umbral));
         }
+
+        // 10. Asignar categoría a producto
+        [HttpPatch("{id}/categoria")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult PatchCategoria(int id, [FromBody] ProductoCategoriaDto dto)
+        {
+            try
+            {
+                _productoService.AsignarCategoria(id, dto.CategoriaId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

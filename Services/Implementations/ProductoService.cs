@@ -2,6 +2,7 @@ using InventarioApi.Models;
 using InventarioApi.Models.DTOs;
 using InventarioApi.Repository.Interfaces;
 using InventarioApi.Services.Interfaces;
+using Mapster;
 
 namespace InventarioApi.Services.Implementations
 {
@@ -19,22 +20,16 @@ namespace InventarioApi.Services.Implementations
         }
 
         // ── Helper privado ────────────────────────────────────────────────────
-        private ProductoResponseDto MapToDto(Producto p)
+          private ProductoResponseDto MapToDto(Producto p)
         {
-            var categoria = _categoriaRepository.GetById(p.CategoriaId);
-            return new ProductoResponseDto
+            var dto = p.Adapt<ProductoResponseDto>();
+            if (p.CategoriaId.HasValue)
             {
-                Id              = p.Id,
-                Nombre          = p.Nombre,
-                SKU             = p.SKU,
-                Precio          = p.Precio,
-                Stock           = p.Stock,
-                CategoriaId     = p.CategoriaId,
-                CategoriaNombre = categoria?.Nombre ?? "Sin categoría"
-            };
+                var categoria = _categoriaRepository.GetById(p.CategoriaId.Value);
+                dto.CategoriaNombre = categoria?.Nombre ?? "Sin categoría";
+            }
+            return dto;
         }
-
-        // ── CRUD base ─────────────────────────────────────────────────────────
 
         public List<ProductoResponseDto> GetAll() =>
             _productoRepository.GetAll().Select(MapToDto).ToList();
@@ -45,27 +40,19 @@ namespace InventarioApi.Services.Implementations
             return producto == null ? null : MapToDto(producto);
         }
 
-        public void Add(ProductoCreateDto dto)
+         public void Add(ProductoCreateDto dto)
         {
-            // Validar que la categoría exista
-            if (_categoriaRepository.GetById(dto.CategoriaId) == null)
+            // Validar categoría solo si se envió
+            if (dto.CategoriaId.HasValue && _categoriaRepository.GetById(dto.CategoriaId.Value) == null)
                 throw new Exception("La categoría especificada no existe.");
 
             var todos = _productoRepository.GetAll();
 
-            // Validar SKU duplicado
             if (todos.Any(p => p.SKU == dto.SKU))
                 throw new Exception("Ya existe un producto con ese SKU.");
 
-            var nuevo = new Producto
-            {
-                Id          = todos.Count > 0 ? todos.Max(p => p.Id) + 1 : 1,
-                Nombre      = dto.Nombre,
-                SKU         = dto.SKU,
-                Precio      = dto.Precio,
-                Stock       = dto.Stock,
-                CategoriaId = dto.CategoriaId
-            };
+            var nuevo = dto.Adapt<Producto>();
+            nuevo.Id = todos.Count > 0 ? todos.Max(p => p.Id) + 1 : 1;
 
             _productoRepository.Add(nuevo);
         }
@@ -76,32 +63,31 @@ namespace InventarioApi.Services.Implementations
             if (existente == null)
                 throw new Exception("Producto no encontrado.");
 
-            // Validar que la categoría exista
-            if (_categoriaRepository.GetById(dto.CategoriaId) == null)
+            if (dto.CategoriaId.HasValue && _categoriaRepository.GetById(dto.CategoriaId.Value) == null)
                 throw new Exception("La categoría especificada no existe.");
 
-            // Validar SKU duplicado excluyendo el propio producto
             var skuDuplicado = _productoRepository.GetAll()
                 .Any(p => p.SKU == dto.SKU && p.Id != dto.Id);
             if (skuDuplicado)
                 throw new Exception("Ya existe otro producto con ese SKU.");
 
-            var actualizado = new Producto
-            {
-                Id          = dto.Id,
-                Nombre      = dto.Nombre,
-                SKU         = dto.SKU,
-                Precio      = dto.Precio,
-                Stock       = dto.Stock,
-                CategoriaId = dto.CategoriaId
-            };
-
+            var actualizado = dto.Adapt<Producto>();
             _productoRepository.Update(actualizado);
         }
 
-        public void Delete(int id) => _productoRepository.Delete(id);
+         public void AsignarCategoria(int productoId, int categoriaId)
+        {
+            var producto = _productoRepository.GetById(productoId)
+                ?? throw new Exception("Producto no encontrado.");
 
-        // ── Filtros ───────────────────────────────────────────────────────────
+            if (_categoriaRepository.GetById(categoriaId) == null)
+                throw new Exception("La categoría especificada no existe.");
+
+            producto.CategoriaId = categoriaId;
+            _productoRepository.Update(producto);
+        }
+
+        public void Delete(int id) => _productoRepository.Delete(id);
 
         public List<ProductoResponseDto> GetByCategoria(int categoriaId) =>
             _productoRepository.GetAll()
@@ -114,8 +100,6 @@ namespace InventarioApi.Services.Implementations
                 .Where(p => disponible ? p.Stock > 0 : p.Stock == 0)
                 .Select(MapToDto)
                 .ToList();
-
-        // ── Operaciones especiales ────────────────────────────────────────────
 
         public void ModificarPrecio(int id, decimal nuevoPrecio)
         {

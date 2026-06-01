@@ -2,6 +2,7 @@ using InventarioApi.Models;
 using InventarioApi.Models.DTOs;
 using InventarioApi.Repository.Interfaces;
 using InventarioApi.Services.Interfaces;
+using Mapster;
 
 namespace InventarioApi.Services.Implementations
 {
@@ -21,14 +22,14 @@ namespace InventarioApi.Services.Implementations
         // 2. Listar categorías con conteo de productos asociados
         public List<CategoriaResponseDto> GetAll()
         {
-            var productos = _productoRepository.GetAll();
+             var productos = _productoRepository.GetAll();
 
             return _categoriaRepository.GetAll()
-                .Select(c => new CategoriaResponseDto
+                .Select(c =>
                 {
-                    Id             = c.Id,
-                    Nombre         = c.Nombre,
-                    TotalProductos = productos.Count(p => p.CategoriaId == c.Id)
+                    var dto = c.Adapt<CategoriaResponseDto>();
+                    dto.TotalProductos = productos.Count(p => p.CategoriaId == c.Id);
+                    return dto;
                 })
                 .ToList();
         }

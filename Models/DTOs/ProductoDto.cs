@@ -6,7 +6,7 @@ namespace InventarioApi.Models.DTOs
         public string SKU { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public int Stock { get; set; }
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
     }
 
     public class ProductoUpdateDto
@@ -16,7 +16,7 @@ namespace InventarioApi.Models.DTOs
         public string SKU { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public int Stock { get; set; }
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
     }
 
     public class ProductoResponseDto
@@ -27,12 +27,17 @@ namespace InventarioApi.Models.DTOs
         public decimal Precio { get; set; }
         public int Stock { get; set; }
         public bool Disponible => Stock > 0;
-        public int CategoriaId { get; set; }
+        public int? CategoriaId { get; set; }
         public string CategoriaNombre { get; set; } = string.Empty;
     }
 
     public class ProductoPrecioDto
     {
         public decimal NuevoPrecio { get; set; }
+    }
+
+      public class ProductoCategoriaDto              // para el nuevo endpoint
+    {
+        public int CategoriaId { get; set; }
     }
 }
