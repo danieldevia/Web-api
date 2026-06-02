@@ -10,14 +10,14 @@ namespace InventarioApi.Models.DTOs
     }
 
     public class ProductoUpdateDto
-    {
-        public int Id { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string SKU { get; set; } = string.Empty;
-        public decimal Precio { get; set; }
-        public int Stock { get; set; }
-        public int? CategoriaId { get; set; }
-    }
+{
+    public int Id { get; set; }
+    public string Nombre { get; set; } = string.Empty;
+    public string SKU { get; set; } = string.Empty;
+    public decimal Precio { get; set; }
+    public int? CategoriaId { get; set; }
+    
+}
 
     public class ProductoResponseDto
     {
