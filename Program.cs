@@ -86,6 +86,10 @@ builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSingleton<ICategoriaRepository, CategoriaRepository>(); 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();  
+builder.Services.AddSingleton<IKardexRepository, KardexRepository>();
+builder.Services.AddScoped<IKardexService, KardexService>();
+builder.Services.AddSingleton<IVentaRepository, VentaRepository>();
+builder.Services.AddScoped<IVentaService, VentaService>();
 
 // ──────────────────────────────────────────────
 var app = builder.Build();

@@ -21,7 +21,7 @@ namespace InventarioApi.Services.Implementations
             _kardexService      = kardexService;
         }
 
-        public VentaResponseDto RegistrarVenta(VentaCreateDto dto)
+        public VentaResponseDto RegistrarVenta(VentaCreateDto dto, int UsuarioId)
         {
             if (dto.Detalles == null || dto.Detalles.Count == 0)
                 throw new Exception("La venta debe tener al menos un producto.");
@@ -45,7 +45,7 @@ namespace InventarioApi.Services.Implementations
             {
                 Id        = todas.Count > 0 ? todas.Max(v => v.Id) + 1 : 1,
                 Fecha     = DateTime.Now,
-                UsuarioId = dto.UsuarioId,
+                UsuarioId = UsuarioId,
                 Detalles  = new List<DetalleVenta>()
             };
 

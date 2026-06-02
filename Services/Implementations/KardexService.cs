@@ -221,18 +221,70 @@ namespace InventarioApi.Services.Implementations
         }
 
         // ── Consultas ─────────────────────────────────────────────────────────
-        public List<Kardex> ConsultarKardex(int productoId)
+       public List<KardexMovimientoDto> ConsultarKardex(int productoId)
+{
+    _ = _productoRepository.GetById(productoId)
+        ?? throw new Exception("Producto no encontrado.");
+
+    return _kardexRepository.GetByProducto(productoId).Select(m =>
+    {
+        var dto = m.Adapt<KardexMovimientoDto>();
+        dto.ProductoNombre = _productoRepository.GetById(m.ProductoId)?.Nombre ?? "Sin nombre";
+        return dto;
+    }).ToList();
+}
+
+public List<KardexMovimientoDto> ConsultarTodos()
+{
+    return _kardexRepository.GetAll().Select(m =>
+    {
+        var dto = m.Adapt<KardexMovimientoDto>();
+        dto.ProductoNombre = _productoRepository.GetById(m.ProductoId)?.Nombre ?? "Sin nombre";
+        return dto;
+    }).ToList();
+}
+
+public KardexMovimientoDto? UltimoMovimiento(int productoId)
+{
+    var m = _kardexRepository.GetUltimoMovimiento(productoId);
+    if (m == null) return null;
+
+    var dto = m.Adapt<KardexMovimientoDto>();
+    dto.ProductoNombre = _productoRepository.GetById(m.ProductoId)?.Nombre ?? "Sin nombre";
+    return dto;
+}
+
+public KardexResumenDto GetResumenKardex(int productoId)
+{
+    var producto = _productoRepository.GetById(productoId)
+        ?? throw new Exception("Producto no encontrado.");
+
+    var movimientos = _kardexRepository.GetByProducto(productoId);
+    var ultimo      = movimientos.LastOrDefault();
+
+    var resumen = new KardexResumenDto
+    {
+        ProductoId             = producto.Id,
+        ProductoNombre         = producto.Nombre,
+        SKU                    = producto.SKU,
+        StockActual            = ultimo?.SaldoCantidad    ?? producto.Stock,
+        CostoPromedioPonderado = ultimo?.CostoPromedio    ?? 0,
+        ValorTotalInventario   = ultimo?.SaldoValor       ?? 0,
+        TotalUnidadesEntradas  = movimientos.Sum(m => m.CantidadEntrada),
+        TotalCostoEntradas     = movimientos.Sum(m => m.CostoTotalEntrada),
+        TotalUnidadesSalidas   = movimientos.Sum(m => m.CantidadSalida),
+        TotalCostoSalidas      = movimientos.Sum(m => m.CostoTotalSalida),
+        UtilidadTotal          = movimientos.Sum(m => m.Utilidad),
+        Movimientos            = movimientos.Select(m =>
         {
-            _ = _productoRepository.GetById(productoId)
-                ?? throw new Exception("Producto no encontrado.");
-            return _kardexRepository.GetByProducto(productoId);
-        }
+            var dto = m.Adapt<KardexMovimientoDto>();
+            dto.ProductoNombre = producto.Nombre;
+            return dto;
+        }).ToList()
+    };
 
-        public List<Kardex> ConsultarTodos() =>
-            _kardexRepository.GetAll();
-
-        public Kardex? UltimoMovimiento(int productoId) =>
-            _kardexRepository.GetUltimoMovimiento(productoId);
+    return resumen;
+}
 
         public decimal GetCostoPromedio(int productoId) =>
             _kardexRepository.GetUltimoMovimiento(productoId)?.CostoPromedio ?? 0;
@@ -243,31 +295,6 @@ namespace InventarioApi.Services.Implementations
 
         public decimal GetValorTotalInventario(int productoId) =>
             _kardexRepository.GetUltimoMovimiento(productoId)?.SaldoValor ?? 0;
-
-        // ── Resumen ───────────────────────────────────────────────────────────
-        public KardexResumenDto GetResumenKardex(int productoId)
-        {
-            var producto = _productoRepository.GetById(productoId)
-                ?? throw new Exception("Producto no encontrado.");
-
-            var movimientos = _kardexRepository.GetByProducto(productoId);
-            var ultimo      = movimientos.LastOrDefault();
-
-            return new KardexResumenDto
-            {
-                ProductoId             = producto.Id,
-                ProductoNombre         = producto.Nombre,
-                SKU                    = producto.SKU,
-                StockActual            = ultimo?.SaldoCantidad        ?? producto.Stock,
-                CostoPromedioPonderado = ultimo?.CostoPromedio        ?? 0,
-                ValorTotalInventario   = ultimo?.SaldoValor           ?? 0,
-                TotalUnidadesEntradas  = movimientos.Sum(m => m.CantidadEntrada),
-                TotalCostoEntradas     = movimientos.Sum(m => m.CostoTotalEntrada),
-                TotalUnidadesSalidas   = movimientos.Sum(m => m.CantidadSalida),
-                TotalCostoSalidas      = movimientos.Sum(m => m.CostoTotalSalida),
-                UtilidadTotal          = movimientos.Sum(m => m.Utilidad),
-                Movimientos            = movimientos.Select(m => m.Adapt<KardexMovimientoDto>()).ToList()
-            };
-        }
+      
     }
 }

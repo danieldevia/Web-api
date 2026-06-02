@@ -18,6 +18,8 @@ namespace InventarioApi.Models.DTOs
     public class KardexMovimientoDto
     {
         public int Id { get; set; }
+        public int ProductoId { get; set; }
+        public string ProductoNombre { get; set; } = string.Empty;
         public DateTime Fecha { get; set; }
         public string TipoMovimiento { get; set; } = string.Empty;
 

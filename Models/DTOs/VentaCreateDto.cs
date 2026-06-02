@@ -8,7 +8,6 @@ namespace InventarioApi.Models.DTOs
 
     public class VentaCreateDto
     {
-        public int UsuarioId { get; set; }
         public List<DetalleVentaCreateDto> Detalles { get; set; } = new();
     }
 

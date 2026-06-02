@@ -37,7 +37,7 @@ namespace InventarioApi.Repository.Implementations
     // ── Café Molido ───────────────────────────────────────────────────
     new Producto { Id = 18, Nombre = "Café Molido 250g",       SKU = "MOL-001", Precio = 15000, Stock = 30,  CategoriaId = 6 },
     new Producto { Id = 19, Nombre = "Café Molido 500g",       SKU = "MOL-002", Precio = 28000, Stock = 30,  CategoriaId = 6 },
-    new() { Id = 20, Nombre = "Café Molido 1kg",               SKU = "MOL-003", Precio = 52000, Stock = 20,  CategoriaId = 6 }
+    new Producto { Id = 20, Nombre = "Café Molido 1kg",        SKU = "MOL-003", Precio = 52000, Stock = 20,  CategoriaId = 6 }
     };
 
         // Solo trae todos los productos, sin lógica

@@ -1,6 +1,6 @@
 using InventarioApi.Models;
 
-namespace InventarioApi.Services.Interfaces
+namespace InventarioApi.Repository.Interfaces
 {
 
     public interface IKardexRepository

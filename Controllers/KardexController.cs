@@ -102,7 +102,7 @@ namespace InventarioApi.Controllers
         // 5. Movimientos línea por línea
         [HttpGet("{productoId}")]
         [Authorize(Roles = "Admin, Empleado")]
-        public ActionResult ConsultarKardex(int productoId)
+        public ActionResult<List<KardexMovimientoDto>> ConsultarKardex(int productoId)
         {
             try
             {
@@ -115,18 +115,16 @@ namespace InventarioApi.Controllers
             }
         }
 
-        // 6. Todos los movimientos
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public ActionResult ConsultarTodos()
+        public ActionResult<List<KardexMovimientoDto>> ConsultarTodos()
         {
             return Ok(_kardexService.ConsultarTodos());
         }
 
-        // 7. Último movimiento / saldo actual
         [HttpGet("{productoId}/ultimo")]
         [Authorize(Roles = "Admin, Empleado")]
-        public ActionResult UltimoMovimiento(int productoId)
+        public ActionResult<KardexMovimientoDto> UltimoMovimiento(int productoId)
         {
             var ultimo = _kardexService.UltimoMovimiento(productoId);
             if (ultimo == null) return NotFound("No hay movimientos para este producto.");

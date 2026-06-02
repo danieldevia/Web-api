@@ -86,3 +86,6 @@ C:\Users\danie\Downloads\InventarioApi\InventarioApi\obj\Debug\net10.0\refint\In
 C:\Users\danie\Downloads\InventarioApi\InventarioApi\obj\Debug\net10.0\InventarioApi.pdb
 C:\Users\danie\Downloads\InventarioApi\InventarioApi\obj\Debug\net10.0\InventarioApi.genruntimeconfig.cache
 C:\Users\danie\Downloads\InventarioApi\InventarioApi\obj\Debug\net10.0\ref\InventarioApi.dll
+C:\Users\danie\Downloads\InventarioApi\InventarioApi\bin\Debug\net10.0\Mapster.dll
+C:\Users\danie\Downloads\InventarioApi\InventarioApi\bin\Debug\net10.0\Mapster.Core.dll
+C:\Users\danie\Downloads\InventarioApi\InventarioApi\bin\Debug\net10.0\Mapster.DependencyInjection.dll
