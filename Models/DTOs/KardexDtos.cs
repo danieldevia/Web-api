@@ -11,7 +11,7 @@ namespace InventarioApi.Models.DTOs
     {
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
-        public decimal CostoUnitario { get; set; }
+         public int VentaId { get; set; }
         public string Observacion { get; set; } = string.Empty;
     }
 
@@ -36,6 +36,7 @@ namespace InventarioApi.Models.DTOs
         // Venta
         public decimal PrecioVenta { get; set; }
         public decimal Utilidad { get; set; }
+        public decimal IngresoTotal { get; set; }
 
         // Saldo
         public int SaldoCantidad { get; set; }
@@ -66,6 +67,7 @@ namespace InventarioApi.Models.DTOs
 
         // Utilidad
         public decimal UtilidadTotal { get; set; }
+        public decimal TotalIngresos { get; set; }
 
         public List<KardexMovimientoDto> Movimientos { get; set; } = new();
     }

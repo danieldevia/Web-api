@@ -39,23 +39,23 @@ namespace InventarioApi.Services.Implementations
             var producto = _productoRepository.GetById(id);
             return producto == null ? null : MapToDto(producto);
         }
+        
+        public void Add(ProductoCreateDto dto)
+{
+    if (dto.CategoriaId.HasValue && _categoriaRepository.GetById(dto.CategoriaId.Value) == null)
+        throw new Exception("La categoría especificada no existe.");
 
-         public void Add(ProductoCreateDto dto)
-        {
-            // Validar categoría solo si se envió
-            if (dto.CategoriaId.HasValue && _categoriaRepository.GetById(dto.CategoriaId.Value) == null)
-                throw new Exception("La categoría especificada no existe.");
+    var todos = _productoRepository.GetAll();
 
-            var todos = _productoRepository.GetAll();
+    if (todos.Any(p => p.SKU == dto.SKU))
+        throw new Exception("Ya existe un producto con ese SKU.");
 
-            if (todos.Any(p => p.SKU == dto.SKU))
-                throw new Exception("Ya existe un producto con ese SKU.");
-
-            var nuevo = dto.Adapt<Producto>();
-            nuevo.Id = todos.Count > 0 ? todos.Max(p => p.Id) + 1 : 1;
-
-            _productoRepository.Add(nuevo);
-        }
+    var nuevo = dto.Adapt<Producto>();
+    nuevo.Id    = todos.Count > 0 ? todos.Max(p => p.Id) + 1 : 1;
+    nuevo.Stock = 0;  // ← siempre arranca en 0, el kardex lo mueve
+    
+    _productoRepository.Add(nuevo);
+}
 
        public void Update(ProductoUpdateDto dto)
 {

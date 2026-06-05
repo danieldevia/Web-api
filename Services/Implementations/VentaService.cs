@@ -10,15 +10,18 @@ namespace InventarioApi.Services.Implementations
         private readonly IVentaRepository    _ventaRepository;
         private readonly IProductoRepository _productoRepository;
         private readonly IKardexService      _kardexService;
+        private readonly IUsuarioRepository  _usuarioRepository; 
 
         public VentaService(
             IVentaRepository    ventaRepository,
             IProductoRepository productoRepository,
-            IKardexService      kardexService)
+            IKardexService      kardexService,
+            IUsuarioRepository  usuarioRepository)
         {
             _ventaRepository    = ventaRepository;
             _productoRepository = productoRepository;
             _kardexService      = kardexService;
+            _usuarioRepository  = usuarioRepository;
         }
 
         public VentaResponseDto RegistrarVenta(VentaCreateDto dto, int UsuarioId)
@@ -70,7 +73,7 @@ namespace InventarioApi.Services.Implementations
                 });
 
                 // Mueve el kardex automáticamente
-                _kardexService.RegistrarVenta(item.ProductoId, item.Cantidad,
+                _kardexService.RegistrarVenta(item.ProductoId, item.Cantidad, venta.Id,
                     $"Venta #{venta.Id}");
 
                 total += subtotal;
@@ -95,6 +98,7 @@ namespace InventarioApi.Services.Implementations
                 Id        = venta.Id,
                 Fecha     = venta.Fecha,
                 UsuarioId = venta.UsuarioId,
+                UsuarioNombre = _usuarioRepository.GetById(UsuarioId)?.Nombre ?? "Sin nombre",
                 Total     = total,
                 Detalles  = detallesResponse
             };
@@ -110,6 +114,7 @@ namespace InventarioApi.Services.Implementations
                 Id        = venta.Id,
                 Fecha     = venta.Fecha,
                 UsuarioId = venta.UsuarioId,
+                UsuarioNombre = _usuarioRepository.GetById(venta.UsuarioId)?.Nombre ?? "Sin nombre",
                 Total     = venta.Total,
                 Detalles  = venta.Detalles.Select(d =>
                 {

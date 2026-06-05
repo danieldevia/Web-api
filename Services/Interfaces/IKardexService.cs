@@ -8,7 +8,7 @@ namespace InventarioApi.Services.Interfaces
     void RegistrarCompra(CompraDto dto);
     void RegistrarAjuste(AjusteDto dto);
     void RegistrarDevolucion(DevolucionDto dto);
-    void RegistrarVenta(int productoId, int cantidad, string observacion = "");
+    void RegistrarVenta(int productoId, int cantidad, int ventaId, string observacion = "");
 
     List<KardexMovimientoDto> ConsultarKardex(int productoId);
     List<KardexMovimientoDto> ConsultarTodos();

@@ -8,6 +8,8 @@ namespace InventarioApi.Models
         public string TipoMovimiento { get; set; } = string.Empty;
         // "Compra", "Venta", "Ajuste", "Devolucion"
 
+         public int VentaId { get; set; }
+
         // Entradas
         public int CantidadEntrada { get; set; }
         public decimal CostoUnitarioEntrada { get; set; }
@@ -22,6 +24,7 @@ namespace InventarioApi.Models
         public decimal PrecioVenta { get; set; }
         public decimal Utilidad { get; set; }
         // (PrecioVenta - CostoUnitarioSalida) × CantidadSalida
+        public decimal IngresoTotal { get; set; }
 
         // Saldo después del movimiento
         public int SaldoCantidad { get; set; }

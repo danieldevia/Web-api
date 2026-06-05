@@ -16,6 +16,7 @@ namespace InventarioApi.Models.DTOs
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
         public int UsuarioId { get; set; }
+        public string UsuarioNombre { get; set; } = string.Empty;
         public decimal Total { get; set; }
         public List<DetalleVentaResponseDto> Detalles { get; set; } = new();
     }

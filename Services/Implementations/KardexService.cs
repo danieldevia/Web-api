@@ -72,7 +72,7 @@ namespace InventarioApi.Services.Implementations
         }
 
         // ── Venta (solo llamado desde VentaService) ───────────────────────────
-        public void RegistrarVenta(int productoId, int cantidad, string observacion = "")
+        public void RegistrarVenta(int productoId, int cantidad, int ventaId, string observacion = "")
         {
             var producto = _productoRepository.GetById(productoId)
                 ?? throw new Exception("Producto no encontrado.");
@@ -91,6 +91,7 @@ namespace InventarioApi.Services.Implementations
             var nuevoSaldoCant   = ultimo.SaldoCantidad - cantidad;
             var nuevoSaldoValor  = nuevoSaldoCant * costoPromedio;
             var utilidad         = (producto.Precio - costoPromedio) * cantidad;
+            var ingresoTotal     = producto.Precio * cantidad;
 
             _kardexRepository.Add(new Kardex
             {
@@ -98,6 +99,7 @@ namespace InventarioApi.Services.Implementations
                 ProductoId           = productoId,
                 Fecha                = DateTime.Now,
                 TipoMovimiento       = "Venta",
+                VentaId              = ventaId,
                 CantidadEntrada      = 0,
                 CostoUnitarioEntrada = 0,
                 CostoTotalEntrada    = 0,
@@ -106,6 +108,7 @@ namespace InventarioApi.Services.Implementations
                 CostoTotalSalida     = Math.Round(costoTotalSalida, 2),
                 PrecioVenta          = producto.Precio,
                 Utilidad             = Math.Round(utilidad, 2),
+                IngresoTotal         = Math.Round(ingresoTotal, 2),
                 CostoPromedio        = costoPromedio,
                 SaldoCantidad        = nuevoSaldoCant,
                 SaldoValor           = Math.Round(nuevoSaldoValor, 2),
@@ -177,48 +180,51 @@ namespace InventarioApi.Services.Implementations
 
         // ── Devolución ────────────────────────────────────────────────────────
         public void RegistrarDevolucion(DevolucionDto dto)
-        {
-            var producto = _productoRepository.GetById(dto.ProductoId)
-                ?? throw new Exception("Producto no encontrado.");
+{
+    var producto = _productoRepository.GetById(dto.ProductoId)
+        ?? throw new Exception("Producto no encontrado.");
 
-            if (dto.Cantidad <= 0)
-                throw new Exception("La cantidad debe ser mayor que cero.");
+    var ultimo = _kardexRepository.GetUltimoMovimiento(dto.ProductoId)
+        ?? throw new Exception("El producto no tiene movimientos registrados.");
 
-            if (dto.CostoUnitario <= 0)
-                throw new Exception("El costo unitario debe ser mayor que cero.");
+    // Buscar la venta específica en el kardex
+    var ventaKardex = _kardexRepository.GetByProducto(dto.ProductoId)
+        .FirstOrDefault(m => m.TipoMovimiento == "Venta" && m.VentaId == dto.VentaId)
+        ?? throw new Exception($"No se encontró la venta #{dto.VentaId} para este producto.");
 
-            var ultimo            = _kardexRepository.GetUltimoMovimiento(dto.ProductoId);
-            var saldoCantAnterior = ultimo?.SaldoCantidad ?? producto.Stock;
-            var saldoValAnterior  = ultimo?.SaldoValor    ?? 0;
+    if (dto.Cantidad > ventaKardex.CantidadSalida)
+        throw new Exception($"No puedes devolver más unidades de las vendidas. Vendidas: {ventaKardex.CantidadSalida}.");
 
-            var costoTotalEntrada  = dto.Cantidad * dto.CostoUnitario;
-            var nuevoSaldoCant     = saldoCantAnterior + dto.Cantidad;
-            var nuevoCostoPromedio = (saldoValAnterior + costoTotalEntrada) / nuevoSaldoCant;
-            var nuevoSaldoValor    = nuevoSaldoCant * nuevoCostoPromedio;
+    var costoPromedio     = ultimo.CostoPromedio;
+    var precioVenta       = ventaKardex.PrecioVenta;  // ← precio de esa venta específica
+    var costoTotalEntrada = dto.Cantidad * costoPromedio;
+    var nuevoSaldoCant    = ultimo.SaldoCantidad + dto.Cantidad;
+    var nuevoSaldoValor   = nuevoSaldoCant * costoPromedio;
+    var utilidad          = (precioVenta - costoPromedio) * dto.Cantidad * -1;
 
-            _kardexRepository.Add(new Kardex
-            {
-                Id                   = NuevoId(),
-                ProductoId           = dto.ProductoId,
-                Fecha                = DateTime.Now,
-                TipoMovimiento       = "Devolucion",
-                CantidadEntrada      = dto.Cantidad,
-                CostoUnitarioEntrada = dto.CostoUnitario,
-                CostoTotalEntrada    = costoTotalEntrada,
-                CantidadSalida       = 0,
-                CostoUnitarioSalida  = 0,
-                CostoTotalSalida     = 0,
-                PrecioVenta          = 0,
-                Utilidad             = 0,
-                CostoPromedio        = Math.Round(nuevoCostoPromedio, 2),
-                SaldoCantidad        = nuevoSaldoCant,
-                SaldoValor           = Math.Round(nuevoSaldoValor, 2),
-                Observacion          = dto.Observacion
-            });
+    _kardexRepository.Add(new Kardex
+    {
+        Id                   = NuevoId(),
+        ProductoId           = dto.ProductoId,
+        Fecha                = DateTime.Now,
+        TipoMovimiento       = "Devolucion",
+        CantidadEntrada      = dto.Cantidad,
+        CostoUnitarioEntrada = costoPromedio,
+        CostoTotalEntrada    = Math.Round(costoTotalEntrada, 2),
+        CantidadSalida       = 0,
+        CostoUnitarioSalida  = 0,
+        CostoTotalSalida     = 0,
+        PrecioVenta          = precioVenta,
+        Utilidad             = Math.Round(utilidad, 2),
+        SaldoCantidad        = nuevoSaldoCant,
+        CostoPromedio        = costoPromedio,
+        SaldoValor           = Math.Round(nuevoSaldoValor, 2),
+        Observacion          = $"Devolución venta #{dto.VentaId} - {dto.Observacion}"
+    });
 
-            producto.Stock = nuevoSaldoCant;
-            _productoRepository.Update(producto);
-        }
+    producto.Stock = nuevoSaldoCant;
+    _productoRepository.Update(producto);
+}
 
         // ── Consultas ─────────────────────────────────────────────────────────
        public List<KardexMovimientoDto> ConsultarKardex(int productoId)
@@ -275,6 +281,7 @@ public KardexResumenDto GetResumenKardex(int productoId)
         TotalUnidadesSalidas   = movimientos.Sum(m => m.CantidadSalida),
         TotalCostoSalidas      = movimientos.Sum(m => m.CostoTotalSalida),
         UtilidadTotal          = movimientos.Sum(m => m.Utilidad),
+        TotalIngresos          = movimientos.Sum(m => m.IngresoTotal),
         Movimientos            = movimientos.Select(m =>
         {
             var dto = m.Adapt<KardexMovimientoDto>();
