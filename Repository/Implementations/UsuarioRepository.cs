@@ -11,7 +11,6 @@ namespace InventarioApi.Repository.Implementations
             new Usuario { Id = 4, Nombre = "Inactivo",    Email = "inactivo@sistema.com",    Password = "123", TipoRol = Models.Enums.Rol.Empleado,    IsActivo = false }
         };
 
-        // Solo guarda, no calcula nada
         public void Add(Usuario usuario)
         {
             _usuarios.Add(usuario);

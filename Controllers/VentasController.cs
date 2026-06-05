@@ -19,20 +19,20 @@ namespace InventarioApi.Controllers
 
         // 1. Registrar venta (mueve el kardex automáticamente)
         [HttpPost]
-[Authorize(Roles = "Admin, Empleado")]
-public ActionResult<VentaResponseDto> Post([FromBody] VentaCreateDto dto)
-{
-    try
-    {
-        var usuarioId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
-        var venta = _ventaService.RegistrarVenta(dto, usuarioId);
-        return StatusCode(201, venta);
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(ex.Message);
-    }
-}
+        [Authorize(Roles = "Admin, Empleado")]
+        public ActionResult<VentaResponseDto> Post([FromBody] VentaCreateDto dto)
+        {
+            try
+            {
+                var usuarioId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+                var venta = _ventaService.RegistrarVenta(dto, usuarioId);
+                return StatusCode(201, venta);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         // 2. Consultar venta por ID
         [HttpGet("{id}")]

@@ -19,7 +19,6 @@ namespace InventarioApi.Services.Implementations
             _productoRepository = productoRepository;
         }
 
-        // ── Helper ID ─────────────────────────────────────────────────────────
         private int NuevoId()
         {
             var todos = _kardexRepository.GetAll();
@@ -71,7 +70,7 @@ namespace InventarioApi.Services.Implementations
             _productoRepository.Update(producto);
         }
 
-        // ── Venta (solo llamado desde VentaService) ───────────────────────────
+        // ── Venta (solo llamado desde VentaService)
         public void RegistrarVenta(int productoId, int cantidad, int ventaId, string observacion = "")
         {
             var producto = _productoRepository.GetById(productoId)

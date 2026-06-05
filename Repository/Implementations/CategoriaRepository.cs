@@ -15,18 +15,14 @@ namespace InventarioApi.Repository.Implementations
     new Categoria { Id = 6, Nombre = "Café Molido" }
     };
 
-        // Solo trae todas las categorías, sin lógica
         public List<Categoria> GetAll() => _categorias;
 
-        // Solo busca por ID, sin lógica
         public Categoria? GetById(int id) =>
             _categorias.FirstOrDefault(c => c.Id == id);
 
-        // Solo guarda, sin lógica
         public void Add(Categoria categoria) =>
             _categorias.Add(categoria);
 
-        // Solo elimina, sin lógica
         public void Delete(int id)
         {
             var categoria = GetById(id);

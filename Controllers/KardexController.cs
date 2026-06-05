@@ -69,9 +69,6 @@ namespace InventarioApi.Controllers
             if (dto.Cantidad <= 0)
                 return BadRequest("La cantidad debe ser mayor que cero.");
 
-            if (dto.CostoUnitario <= 0)
-                return BadRequest("El costo unitario debe ser mayor que cero.");
-
             try
             {
                 _kardexService.RegistrarDevolucion(dto);
@@ -83,7 +80,7 @@ namespace InventarioApi.Controllers
             }
         }
 
-        // 4. Resumen completo del kardex (endpoint principal del parcial)
+        // 4. Resumen completo del kardex 
         [HttpGet("{productoId}/resumen")]
         [Authorize(Roles = "Admin, Empleado")]
         public ActionResult GetResumen(int productoId)
@@ -131,7 +128,7 @@ namespace InventarioApi.Controllers
             return Ok(ultimo);
         }
 
-        // 8. Costo promedio ponderado vigente
+        // 6. Costo promedio ponderado vigente
         [HttpGet("{productoId}/costo-promedio")]
         [Authorize(Roles = "Admin, Empleado")]
         public ActionResult GetCostoPromedio(int productoId)
@@ -139,7 +136,7 @@ namespace InventarioApi.Controllers
             return Ok(new { CostoPromedioPonderado = _kardexService.GetCostoPromedio(productoId) });
         }
 
-        // 9. Valor total del inventario
+        // 7. Valor total del inventario
         [HttpGet("{productoId}/valor-inventario")]
         [Authorize(Roles = "Admin, Empleado")]
         public ActionResult GetValorInventario(int productoId)
@@ -147,7 +144,7 @@ namespace InventarioApi.Controllers
             return Ok(new { ValorTotalInventario = _kardexService.GetValorTotalInventario(productoId) });
         }
 
-        // 10. Stock actual según kardex
+        // 8. Stock actual según kardex
         [HttpGet("{productoId}/stock")]
         [Authorize(Roles = "Admin, Empleado")]
         public ActionResult GetStock(int productoId)

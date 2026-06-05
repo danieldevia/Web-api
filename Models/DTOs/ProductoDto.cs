@@ -35,7 +35,7 @@ namespace InventarioApi.Models.DTOs
         public decimal NuevoPrecio { get; set; }
     }
 
-      public class ProductoCategoriaDto              // para el nuevo endpoint
+      public class ProductoCategoriaDto            
     {
         public int CategoriaId { get; set; }
     }
